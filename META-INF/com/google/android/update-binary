@@ -51,35 +51,22 @@ error_mounting() {
   error "Could not mount $1! Aborting"
 }
 
-get_block_for_mount_point() {
-  grep -v "^#" /etc/recovery.fstab | grep "[[:blank:]]$1[[:blank:]]" | tail -n1 | tr -s [:blank:] ' ' | cut -d' ' -f1
+get_block_for_mount_point(){
+  grep -v "^#" /etc/recovery.fstab | awk -v mp="$1" '$0~mp{print $1;exit}'
 }
 
-find_block() {
-  local name="$1"
-  local fstab_entry=$(get_block_for_mount_point "/$name")
-  # P-SAR hacks
-  [ -z "$fstab_entry" ] && [ "$name" = "system" ] && fstab_entry=$(get_block_for_mount_point "/")
-  [ -z "$fstab_entry" ] && [ "$name" = "system" ] && fstab_entry=$(get_block_for_mount_point "/system_root")
+find_block(){
+  n="$1"; blk=$(get_block_for_mount_point "/$n");
+  [ -z "$blk" ] && [ "$n" = "system" ] && blk=$(get_block_for_mount_point "/system_root");
+  slot=$(getprop ro.boot.slot_suffix);
+  echo /dev/block/mapper/${blk}${slot};
+}
 
-  local dev
-  if [ "$DYNAMIC_PARTITIONS" = "true" ]; then
-    if [ -n "$fstab_entry" ]; then
-      dev="${BLK_PATH}/${fstab_entry}${SLOT_SUFFIX}"
-    else
-      dev="${BLK_PATH}/${name}${SLOT_SUFFIX}"
-    fi
-  else
-    if [ -n "$fstab_entry" ]; then
-      dev="${fstab_entry}${SLOT_SUFFIX}"
-    else
-      dev="${BLK_PATH}/${name}${SLOT_SUFFIX}"
-    fi
-  fi
-
-  if [ -b "$dev" ]; then
-    echo "$dev"
-  fi
+mount_system(){
+  dev="$1"; tgt="$2";
+  fstype=$(blkid -s TYPE -o value "$dev");
+  mkdir -p "$tgt";
+  mount -t "$fstype" -o ro "$dev" "$tgt" || abort "cannot mount $tgt";
 }
 
 compute_apps_size() {
@@ -190,7 +177,7 @@ fi
 # Mount and define SYSTEM_OUT
 SYSTEM_MNT=/mnt/system
 mkdir -p "$SYSTEM_MNT" || true
-if mount -o rw "$SYSTEM_BLOCK" "$SYSTEM_MNT"; then
+if mount_system "$SYSTEM_BLOCK" "$SYSTEM_MNT"; then
 ui_print "$SYSTEM_MNT mounted"
 else
 error_mounting "$SYSTEM_MNT"
@@ -218,7 +205,7 @@ fi
 
 if [ -n "$PRODUCT_BLOCK" ]; then
   mkdir /product || true
-  if mount -o rw "$PRODUCT_BLOCK" /product; then
+  if mount_system "$PRODUCT_BLOCK" /product; then
     ui_print "/product mounted"
   else
     error_mounting "/product"
@@ -226,7 +213,7 @@ if [ -n "$PRODUCT_BLOCK" ]; then
 fi
 if [ -n "$SYSTEM_EXT_BLOCK" ]; then
   mkdir /system_ext || true
-  if mount -o rw "$SYSTEM_EXT_BLOCK" /system_ext; then
+  if mount_system "$SYSTEM_EXT_BLOCK" /system_ext; then
     ui_print "/system_ext mounted"
   else
     error_mounting "/system_ext"
