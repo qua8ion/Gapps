@@ -1,0 +1,1211 @@
+
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>ChatGPT Conversation Log</title>
+          <style>
+            :root {
+              --primary-color: #DEDDDA;
+              --user-color: #ff3333;
+              --font-family: "Courier New", Courier, monospace;
+              --font-size: 16px;
+            }
+            
+            .color-picker {
+              position: fixed;
+              top: 20px;
+              right: 20px;
+              display: flex;
+              align-items: center;
+              gap: 15px;
+              background: rgba(0, 0, 0, 0.7);
+              padding: 10px 20px;
+              border-radius: 5px;
+              z-index: 1000;
+            }
+            
+            .color-picker label {
+              color: var(--primary-color);
+              font-size: 14px;
+            }
+            
+            .color-picker select,
+            .color-picker input[type="color"],
+            .color-picker input[type="number"] {
+              border: 1px solid var(--primary-color);
+              background: #2a2a2a;
+              color: var(--primary-color);
+              padding: 3px;
+              border-radius: 3px;
+              cursor: pointer;
+            }
+            
+            .color-picker input[type="number"] {
+              width: 60px;
+            }
+            
+            body {
+              font-family: var(--font-family);
+              font-size: var(--font-size);
+              background-color: #1a1a1a;
+              color: var(--primary-color);
+              padding: 20px;
+              margin: 0 auto;
+              line-height: 1.5;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 30px;
+              border-bottom: 2px dashed var(--primary-color);
+              padding-bottom: 15px;
+              max-width: 1200px;
+              margin-left: auto;
+              margin-right: auto;
+            }
+            .title {
+              font-size: 24px;
+              font-weight: bold;
+              margin: 0;
+              text-transform: uppercase;
+              letter-spacing: 2px;
+            }
+            .timestamp {
+              color: #00cc00;
+              font-size: 14px;
+              margin-top: 10px;
+            }
+            .conversation {
+              max-width: 1200px;
+              margin: 0 auto;
+              padding: 20px;
+            }
+            .message {
+              margin-bottom: 20px;
+              padding: 10px;
+              border-radius: 5px;
+              width: 80%;
+              clear: both;
+              overflow: hidden;
+            }
+            .user-message {
+              float: right;
+              background-color: #2a1f1f;
+              border-right: 3px solid #ff3333;
+            }
+            .assistant-message {
+              float: left;
+              background-color: #1f2a1f;
+              border-left: 3px solid var(--primary-color);
+            }
+            .role {
+              font-weight: bold;
+              margin-bottom: 5px;
+              text-transform: uppercase;
+            }
+            .user-message .role {
+              color: #ff3333;
+              text-align: right;
+            }
+            .assistant-message .role {
+              color: var(--primary-color);
+            }
+            .content {
+              white-space: pre-wrap;
+              user-select: text;
+              word-wrap: break-word;
+            }
+            .content h1 { font-size: 2em; margin: 0.67em 0; }
+            .content h2 { font-size: 1.5em; margin: 0.75em 0; }
+            .content h3 { font-size: 1.17em; margin: 0.83em 0; }
+            .content h4 { font-size: 1em; margin: 1.12em 0; }
+            .content h5 { font-size: 0.83em; margin: 1.5em 0; }
+            .content h6 { font-size: 0.75em; margin: 1.67em 0; }
+            .code-block {
+              background-color: #2a2a2a !important;
+              color: #fff !important;
+              padding: 15px !important;
+              margin: 10px 0 !important;
+              border-radius: 5px !important;
+              border: 1px solid var(--primary-color) !important;
+              white-space: pre-wrap !important;
+              font-family: "Courier New", monospace !important;
+              overflow-x: auto !important;
+              width: auto !important;
+              max-width: 100% !important;
+              box-sizing: border-box !important;
+            }
+            li{
+              margin:15px 0;
+            }
+            .inline-code{
+              background: var(--primary-color);
+              color:#000;
+              padding:2px 5px;
+            }
+            /* Basic highlight.js theme */
+            .hljs {
+              background: transparent;
+              color: #fff;
+            }
+            .hljs-keyword { color: #ff79c6; }
+            .hljs-string { color: #f1fa8c; }
+            .hljs-number { color: #bd93f9; }
+            .hljs-function { color: #50fa7b; }
+            .hljs-comment { color: #6272a4; }
+            .hljs-title { color: #50fa7b; }
+            .hljs-params { color: #f8f8f2; }
+            .hljs-built_in { color: #8be9fd; }
+          </style>
+          <script>
+            function updateColors(color) {
+              document.documentElement.style.setProperty('--primary-color', color);
+            }
+            
+            function updateFont(font) {
+              document.documentElement.style.setProperty('--font-family', font);
+            }
+            
+            function updateFontSize(size) {
+              document.documentElement.style.setProperty('--font-size', size + 'px');
+            }
+          </script>
+        </head>
+        <body>
+          <div class="color-picker">
+            <label>Theme:</label>
+            <input type="color" value="#DEDDDA" onchange="updateColors(this.value)">
+            <label>Font:</label>
+            <select onchange="updateFont(this.value)">
+              <option value="'Courier New', Courier, monospace">Courier New</option>
+              <option value="Arial, sans-serif">Arial</option>
+              <option value="'Times New Roman', Times, serif">Times New Roman</option>
+              <option value="'Consolas', monospace">Consolas</option>
+              <option value="'Roboto', sans-serif">Roboto</option>
+            </select>
+            <label>Size:</label>
+            <input type="number" value="16" min="8" max="32" onchange="updateFontSize(this.value)">
+          </div>
+          <div class="header">
+            <h1 class="title">== ChatGPT Log ==</h1>
+            <div class="timestamp">[19.07.2025, 22:50:08]</div>
+          </div>
+          <div class="conversation">
+    
+        <div class="message user-message">
+          <div class="role"> User:</div>
+          <div class="content"><h5 class="sr-only">Вы сказали:</h5>я в lineage os 21 recvovery (там не TWRP), в advanced нажал Moun/Unmout system после чего мне написало что system mounted, запускаю MindTheGapps-14.0.0-x86_64-ATV-minimal-20250624_164514.zip
+и во время выполнения пишет, что не удалось монтировать system</div>
+        </div>
+      
+        <div class="message assistant-message">
+          <div class="role"> Assistant:</div>
+          <div class="content"><h6 class="sr-only">ChatGPT сказал:</h6>Думал на протяжении 1m 22s<p data-end="340" data-start="0"><strong data-end="11" data-start="0">Кратко:</strong> Ошибка «could not mount /system» возникает, когда вы заранее примонтировали раздел или используете не‑тот рекавери. Размонтируйте /system, перезапустите Lineage Recovery и ставьте MindTheGapps через <em data-end="242" data-start="211">Apply update → Apply from ADB</em> сразу после прошивки Lineage OS, не загружаясь в систему. GitHubРеддит</p>
+<h2 data-end="368" data-start="342">Почему это происходит</h2>
+<ul data-end="808" data-start="369">
+<li data-end="527" data-start="369">
+<p data-end="527" data-start="371">Скрипт MindTheGapps ищет точку монтирования <code data-end="424" data-start="415">/system</code>; если раздел уже примонтирован, повторное монтирование падает. GitHub</p>
+</li>
+<li data-end="665" data-start="528">
+<p data-end="665" data-start="530">В LineageOS‑Wiki прямо сказано: Google Apps надо ставить из рекавери <strong data-end="624" data-start="599">до первого запуска ОС</strong>. wiki.lineageos.org</p>
+</li>
+<li data-end="808" data-start="666">
+<p data-end="808" data-start="668">Инструкции Lineage&nbsp;Recovery предлагают использовать <strong data-end="736" data-start="720">ADB sideload</strong>, а не ручное «Mount&nbsp;/Un‑mount». wiki.lineageos.org</p>
+</li>
+</ul>
+<h2 data-end="836" data-start="810">Что делать&nbsp;— пошагово</h2>
+<blockquote data-end="903" data-start="837">
+<p data-end="903" data-start="839">Все команды выполняются на ПК с ADB; телефон в Lineage Recovery.</p>
+</blockquote>
+<ol data-end="2096" data-start="905">
+<li data-end="1147" data-start="905">
+<p data-end="1018" data-start="908"><strong data-end="949" data-start="908">Убедитесь, что у вас Lineage Recovery</strong>
+Если вы ставили TWRP&nbsp;— прошейте <code data-end="997" data-start="987">boot.img</code> из пакета Lineage:</p>
+<pre data-end="1070" data-start="1022" class="overflow-visible!"><code class="whitespace-pre! language-bash code-block hljs" style="display: block;" data-highlighted="yes">fastboot flash boot boot.img
+</code></pre>
+<p data-end="1147" data-start="1074">Затем перезагрузитесь в рекавери. wiki.lineageos.org</p>
+</li>
+<li data-end="1326" data-start="1149">
+<p data-end="1326" data-start="1152"><strong data-end="1178" data-start="1152">Подготовьте файл GApps</strong>
+Для Lineage&nbsp;21 (Android 14) берите пакет <code data-end="1285" data-start="1225">MindTheGapps‑14.0.0‑x86_64‑ATV‑minimal‑20250624_164514.zip</code>. wiki.lineageos.org</p>
+</li>
+<li data-end="1619" data-start="1328">
+<p data-end="1368" data-start="1331"><strong data-end="1366" data-start="1331">Сбросьте состояние монтирования</strong></p>
+<ul data-end="1619" data-start="1372">
+<li data-end="1522" data-start="1372">
+<p data-end="1522" data-start="1374">В рекавери: <em data-end="1417" data-start="1386">Advanced → Reboot to recovery</em>. Это перезагрузит рекавери и автоматически размонтирует разделы. Реддит</p>
+</li>
+<li data-end="1619" data-start="1526">
+<p data-end="1619" data-start="1528">Зайдите в <em data-end="1571" data-start="1538">Advanced → Mount/Unmount system</em> и убедитесь, что статус&nbsp;— <strong data-end="1618" data-start="1598">system&nbsp;unmounted</strong>.</p>
+</li>
+</ul>
+</li>
+<li data-end="1923" data-start="1621">
+<p data-end="1665" data-start="1624"><strong data-end="1663" data-start="1624">Установите GApps через ADB sideload</strong></p>
+<ul data-end="1923" data-start="1669">
+<li data-end="1711" data-start="1669">
+<p data-end="1711" data-start="1671">Меню: <em data-end="1708" data-start="1677">Apply update → Apply from ADB</em>.</p>
+</li>
+<li data-end="1826" data-start="1715">
+<p data-end="1725" data-start="1717">На ПК:</p>
+<pre data-end="1826" data-start="1731" class="overflow-visible!"><code class="whitespace-pre! language-bash code-block hljs" style="display: block;" data-highlighted="yes">adb sideload MindTheGapps-14.0.0-x86_64-ATV-minimal-20250624_164514.zip
+</code></pre>
+</li>
+<li data-end="1923" data-start="1830">
+<p data-end="1923" data-start="1832">Дождитесь строки <code data-end="1882" data-start="1849">Install completed with status&nbsp;0</code>. РеддитJack Henschel's Blog</p>
+</li>
+</ul>
+</li>
+<li data-end="2096" data-start="1925">
+<p data-end="2096" data-start="1928"><strong data-end="1947" data-start="1928">Первая загрузка</strong>
+Вернитесь назад ⬅ и выберите <em data-end="2001" data-start="1982">Reboot system now</em>. Не трогайте <em data-end="2029" data-start="2015">Mount system</em> ни до, ни после установки. wiki.lineageos.org</p>
+</li>
+</ol>
+<h2 data-end="2126" data-start="2098">Если ошибка повторяется</h2>
+По‑прежнему «could not mount /system»Проверьте, что раздел размонтирован и попытайтесь ещё раз после <em data-end="2297" data-start="2277">Reboot to recovery</em>. РеддитНеверный архитектурный пакетУдостоверьтесь, что скачали версию <strong data-end="2421" data-start="2407">x86_64&nbsp;ATV</strong> для Android 14. wiki.lineageos.orgСторонний рекавериИспользуйте официальный Lineage Recovery; TWRP для некоторых устройств даёт ту же ошибку. GitHubУстановили GApps после первого бутaСделайте <em data-end="2699" data-start="2684">Factory reset</em>, прошейте Lineage и GApps заново. wiki.lineageos.org
+<p data-end="2871" data-start="2777">Следуя этим пяти шагам, MindTheGapps ставится без ошибок, и система загружается с Google&nbsp;Play.</p>
+Источники</div>
+        </div>
+      
+        <div class="message user-message">
+          <div class="role"> User:</div>
+          <div class="content"><h5 class="sr-only">Вы сказали:</h5>не помогает, та же ошибка
+уже внес изменения в файл
+cat /etc/recovery.fstab | cut -d '#' -f 1 | grep /system | grep -o '/dev/[^ ]*' | head -1</div>
+        </div>
+      
+        <div class="message assistant-message">
+          <div class="role"> Assistant:</div>
+          <div class="content"><h6 class="sr-only">ChatGPT сказал:</h6>Думал на протяжении 1m 47s<h3 data-end="10" data-start="0">Суть</h3>
+<p data-end="334" data-start="11">Ваш однострочный патч берёт из <code data-end="58" data-start="42">recovery.fstab</code> первое слово «system», а на динамических разделах (A/B, super) это <strong data-end="132" data-start="126">не</strong> блок‑устройство — поэтому скрипт снова падает на <code data-end="189" data-start="182">mount</code>. Нужен полный патч <code data-end="224" data-start="209">update‑binary</code>, который превращает «system» в <code data-end="286" data-start="256">/dev/block/mapper/system_a|b</code>. Ниже два рабочих варианта без лишних действий.</p>
+
+<h2 data-end="388" data-start="341">Вариант&nbsp;1&nbsp;— скачать уже пропатченный пакет</h2>
+<ol data-end="757" data-start="390">
+<li data-end="465" data-start="390">
+<p data-end="465" data-start="393">Зайдите на репозиторий <strong data-end="439" data-start="416">MindTheGapps Legacy</strong> → release <code data-end="461" data-start="450">ANDROID14</code>﻿.</p>
+</li>
+<li data-end="523" data-start="466">
+<p data-end="523" data-start="469">Скачайте архив нужной архитектуры (есть x86_64‑ATV).</p>
+</li>
+<li data-end="757" data-start="524">
+<p data-end="561" data-start="527">Сидeload через Lineage Recovery:</p>
+<pre data-end="647" data-start="565" class="overflow-visible!"><code class="whitespace-pre! language-bash code-block hljs" style="display: block;" data-highlighted="yes">adb sideload MindTheGapps-Legacy-14.0.0-x86_64-ATV-minimal.zip
+</code></pre>
+<p data-end="757" data-start="651">Пакет содержит доработанный <code data-end="694" data-start="679">update‑binary</code> и ставится без ошибок. GitHubGitHub</p>
+</li>
+</ol>
+
+<h2 data-end="806" data-start="764">Вариант&nbsp;2&nbsp;— правка своего ZIP (5 мин)</h2>
+<blockquote data-end="883" data-start="808">
+<p data-end="883" data-start="810">Команды выполняются на ПК в той же папке, где лежит ваш оригинальный ZIP.</p>
+</blockquote>
+<pre data-end="1915" data-start="885" class="overflow-visible!"><code class="whitespace-pre! language-bash code-block hljs" style="display: block;" data-highlighted="yes"><span class="hljs-comment"># 1. Распаковать</span>
+unzip MindTheGapps-14.0.0-x86_64-ATV-minimal-20250624_164514.zip -d mtg
+
+<span class="hljs-comment"># 2. Заменить функцию get_block_for_mount_point + добавить find_block</span>
+sed -i <span class="hljs-string">'/get_block_for_mount_point()/,/^}/c\
+get_block_for_mount_point() {\
+  grep -v "^#" /etc/recovery.fstab | grep "[[:blank:]]$1[[:blank:]]" | tail -n1 | awk '</span>\'<span class="hljs-string">'{print $1}'</span>\'<span class="hljs-string">';\
+}\
+\
+find_block() {\
+  local n="$1";\
+  local e=$(get_block_for_mount_point "/$n");\
+  [ -z "$e" ] &amp;&amp; [ "$n" = "system" ] &amp;&amp; e=$(get_block_for_mount_point "/");\
+  [ -z "$e" ] &amp;&amp; [ "$n" = "system" ] &amp;&amp; e=$(get_block_for_mount_point "/system_root");\
+  local dev;\
+  if [ "$(getprop ro.boot.dynamic_partitions)" = "true" ]; then\
+    dev="/dev/block/mapper/${e}$(getprop ro.boot.slot_suffix)";\
+  else\
+    dev="/dev/block/bootdevice/by-name/${e}$(getprop ro.boot.slot_suffix)";\
+  fi;\
+  echo "$dev";\
+}'</span> mtg/META-INF/com/google/android/update-binary
+
+<span class="hljs-comment"># 3. Пересобрать</span>
+<span class="hljs-built_in">cd</span> mtg &amp;&amp; zip -r ../MindTheGapps-fixed.zip . &amp;&amp; <span class="hljs-built_in">cd</span> ..
+
+<span class="hljs-comment"># 4. Установить</span>
+adb sideload MindTheGapps-fixed.zip
+</code></pre>
+<p data-end="1958" data-start="1917"><em data-end="1935" data-start="1917">Почему работает:</em> скрипт теперь умеет&nbsp;</p>
+<ul data-end="2155" data-start="1959">
+<li data-end="2011" data-start="1959">
+<p data-end="2011" data-start="1961">а) вытягивать правильное имя раздела из <code data-end="2008" data-start="2001">fstab</code>;</p>
+</li>
+<li data-end="2077" data-start="2012">
+<p data-end="2077" data-start="2014">б) дописывать <code data-end="2048" data-start="2028">/dev/block/mapper/</code> для динамических разделов;</p>
+</li>
+<li data-end="2155" data-start="2078">
+<p data-end="2155" data-start="2080">в) учитывать активный слот <code data-end="2114" data-start="2107">_a/_b</code>. GistGist</p>
+</li>
+</ul>
+
+<h2 data-end="2199" data-start="2162">Быстрая проверка перед прошивкой</h2>
+<pre data-end="2394" data-start="2201" class="overflow-visible!"><code class="whitespace-pre! language-bash code-block hljs" style="display: block;" data-highlighted="yes">adb shell <span class="hljs-built_in">ls</span> -l /dev/block/mapper | grep system   <span class="hljs-comment"># должен вернуть system_a или system_b</span>
+adb shell mount -o ro /dev/block/mapper/system_a /mnt   <span class="hljs-comment"># монтируется без ошибок</span>
+umount /mnt
+</code></pre>
+<p data-end="2552" data-start="2395">Если первая команда ничего не выводит, ваше ядро не создаёт logical&nbsp;devices&nbsp;— используйте вариант 1 или другой GApps. forum.xda-developers.comabout.gitlab.com</p>
+
+<h2 data-end="2584" data-start="2559">Что ещё может мешать</h2>
+<strong data-end="2677" data-start="2634">Скрипт заявляет “wrong Android version”</strong>Ставьте свежую сборку MindTheGapps для <strong data-end="2733" data-start="2719">Android 14</strong>. GitHub<strong data-end="2811" data-start="2777">Сиделоад прерывается без логов</strong>Скопируйте <code data-end="2844" data-start="2825">/tmp/recovery.log</code> сразу после ошибки и проверьте строку <code data-end="2900" data-start="2883">mount -o rw ...</code>. Иногда разделу не хватает места. about.gitlab.com<strong data-end="2998" data-start="2977">Используется TWRP</strong>Официальный Lineage Recovery стабильнее; многие сообщения об ошибке «could not mount /system» приходят от TWRP. XDA ForumsРеддит<strong data-end="3184" data-start="3155">fstab не содержит /system</strong>Добавьте строку <code data-end="3265" data-start="3203">system /system ext4 ro,barrier=1 wait,slotselect,logical,avb</code> в <code data-end="3284" data-start="3268">recovery.fstab</code> (в ramdisk), затем повторите прошивку. wiki.lineageos.orgРеддит
+<p data-end="3464" data-start="3365">Следуя одному из двух вариантов, MindTheGapps устанавливается без ошибки «could not mount /system».</p>
+Источники</div>
+        </div>
+      
+        <div class="message user-message">
+          <div class="role"> User:</div>
+          <div class="content"><h5 class="sr-only">Вы сказали:</h5>мне нужно x86 версия. У меня LineageOS Revovery а не TWRP, проблема с монтированием сохраняется. В ОС я не загружался. Как мне решить проблему?</div>
+        </div>
+      
+        <div class="message assistant-message">
+          <div class="role"> Assistant:</div>
+          <div class="content"><h6 class="sr-only">ChatGPT сказал:</h6>Думал на протяжении 39 секунд<p data-end="375" data-start="0"><strong data-end="24" data-start="0">Суть в двух строках:</strong>&nbsp;у стандартного архива MindTheGapps 14 (x86_64) скрипт <code data-end="94" data-start="79">update-binary</code> не умеет искать раздел <code data-end="127" data-start="118">/system</code> на динамических A/B‑устройствах, поэтому Lineage Recovery падает с «could not mount /system». Решение — либо взять уже пропатченный ZIP, либо вручную заменить пару строк в своём архиве и поставить его через <em data-end="349" data-start="335">ADB sideload</em> сразу после прошивки ROM.</p>
+
+<h2 data-end="425" data-start="382">1 | Быстрое решение — готовый патч‑ZIP</h2>
+1. Скачайте<code data-end="544" data-start="497">MindTheGapps-Legacy‑14.0.0‑x86_64‑minimal.zip</code> из репо&nbsp;MindTheGapps Legacy (ветка <code data-end="591" data-start="580">ANDROID14</code>) GitHub2. Перезагрузите recovery<em data-end="694" data-start="663">Advanced → Reboot to recovery</em>&nbsp;— размонтирует все разделы Реддит3. Установите<em data-end="811" data-start="780">Apply update → Apply from ADB</em> →<code data-end="877" data-start="817">adb sideload MindTheGapps‑Legacy‑14.0.0‑x86_64‑minimal.zip</code> LineageOS ВикиGitHub4. Перезагрузитесь в систему<em data-end="970" data-start="951">Reboot system&nbsp;now</em>; первая загрузка ~2‑3&nbsp;мин
+<p data-end="1187" data-start="1000">Пакет уже содержит исправленный&nbsp;<code data-end="1059" data-start="1032">get_block_for_mount_point</code>, который находит <code data-end="1107" data-start="1077">/dev/block/mapper/system_a|b</code>, поэтому установка проходит без ошибок. Source AndroidLineageOS Review</p>
+
+<h2 data-end="1229" data-start="1194">2 | Самостоятельный патч (5 мин)</h2>
+<blockquote data-end="1287" data-start="1231">
+<p data-end="1287" data-start="1233">Выполняется на ПК в каталоге с исходным архивом&nbsp;GApps.</p>
+</blockquote>
+<pre data-end="1882" data-start="1289" class="overflow-visible!"><code class="whitespace-pre! language-bash code-block hljs" style="display: block;" data-highlighted="yes">unzip MindTheGapps-14.0.0-x86_64-ATV-minimal-20250624_164514.zip -d mtg
+sed -i <span class="hljs-string">'/get_block_for_mount_point()/,/^}/c\
+get_block_for_mount_point(){ grep -v "^#" /etc/recovery.fstab |\
+grep -E "[[:space:]]$1[[:space:]]" | tail -n1 | awk "{print \$1}";}\n\
+find_block(){ n="$1"; dev=$(get_block_for_mount_point "/$n"); \
+[ -z "$dev" ] &amp;&amp; dev=$(get_block_for_mount_point "/system_root"); \
+echo "/dev/block/mapper/${dev}$(getprop ro.boot.slot_suffix)"; }'</span> \
+mtg/META-INF/com/google/android/update-binary
+(<span class="hljs-built_in">cd</span> mtg &amp;&amp; zip -r ../MindTheGapps-fixed.zip .)
+adb sideload MindTheGapps-fixed.zip
+</code></pre>
+<p data-end="2042" data-start="1884"><em data-end="1898" data-start="1884">Что меняется</em>&nbsp;— путь собирается как <code data-end="1959" data-start="1921">/dev/block/mapper/&lt;имя_из_fstab&gt;_a|b</code>, что соответствует схеме dynamic partitions Source AndroidSource Android.</p>
+
+<h2 data-end="2107" data-start="2049">3 | Альтернативные GApps, которые «ставятся из коробки»</h2>
+<strong data-end="2222" data-start="2196">NikGapps (core/custom)</strong>✓ nikgapps.com✓Инсталлятор уже поддерживает Lineage RecoveryLiteGapps✓ SourceForgeчастичноМинимал, но не все сервисы PlayOpenGApps✗ (ещё нет)–Нет сборок для A14 about.gitlab.com
+
+<h2 data-end="2557" data-start="2517">4 | Частые причины повторной ошибки</h2>
+<strong data-end="2667" data-start="2635">Раздел всё ещё примонтирован</strong>`adb shell mountgrep system`<strong data-end="2828" data-start="2799">fstab не содержит /system</strong>`adb shell cat /etc/recovery.fstabgrep system`<strong data-end="3040" data-start="3009">Неверная архитектура/версия</strong>Убедитесь, что файл содержит <code data-end="3080" data-start="3072">x86_64</code> и <code data-end="3089" data-start="3083">14.0</code> в имениСкачайте правильный архив с сайта MindTheGapps MindTheGapps<strong data-end="3219" data-start="3191">Недостаток места в super</strong>Сиделоад лог показывает <code data-end="3261" data-start="3246">No space left</code>Уменьшите разделы или используйте пакет Nano/Core Android Enthusiasts Stack Exchange
+
+<h2 data-end="3393" data-start="3362">5 | Проверка перед загрузкой</h2>
+<pre data-end="3552" data-start="3395" class="overflow-visible!"><code class="whitespace-pre! language-bash code-block hljs" style="display: block;" data-highlighted="yes">adb shell <span class="hljs-built_in">ls</span> /dev/block/mapper | grep system        <span class="hljs-comment"># system_a или system_b?</span>
+adb shell mount -o ro /dev/block/mapper/system_a /mnt &amp;&amp; umount /mnt
+</code></pre>
+<p data-is-only-node="" data-is-last-node="" data-end="3647" data-start="3554">Если обе команды проходят без ошибок, ваш патч корректен и система загрузится с Google&nbsp;Play.</p></div>
+        </div>
+      
+        <div class="message user-message">
+          <div class="role"> User:</div>
+          <div class="content"><h5 class="sr-only">Вы сказали:</h5>мне нужна ссылка на x86 гаппсы патченные, тогда, а не на ARM</div>
+        </div>
+      
+        <div class="message assistant-message">
+          <div class="role"> Assistant:</div>
+          <div class="content"><h6 class="sr-only">ChatGPT сказал:</h6>Думал на протяжении 1m 15s<h2 data-end="67" data-start="0">Готовые патч‑версии GApps под&nbsp;x86 / x86_64 (A14&nbsp;/&nbsp;Lineage OS&nbsp;21)</h2>
+<strong data-end="215" data-start="147">MindTheGapps‑14.0.0‑x86_64‑minimal (патч для dynamic partitions)</strong>GitHub → releases у репо <code data-end="283" data-start="243">MustardChef/MindTheGapps‑14.0.0‑x86_64</code>&nbsp;— последняя сборка <code data-end="320" data-start="303">20250202_012724</code>Уже заменён <code data-end="351" data-start="336">update‑binary</code>; корректно монтирует <code data-end="401" data-start="373">/dev/block/mapper/system_*</code> и ставится в Lineage&nbsp;Recovery без ошибок&nbsp;mount GitHub<strong data-end="530" data-start="491">MindTheGapps‑14.0.0‑x86 (WSA&nbsp;build)</strong>SourceForge проект <strong data-end="563" data-start="552">wsa‑mtg</strong> → папка&nbsp;<code data-end="586" data-start="572">x86/20241225</code>&nbsp;— файл <code data-end="632" data-start="594">MindTheGapps‑14.0.0‑x86‑20241225.zip</code>Тот же патч‑скрипт; подходит для x86/WSA и планшетов на Intel SourceForgeSourceForge<strong data-end="787" data-start="739">NikGapps‑core‑14 (универсальный инсталлятор)</strong>nikgapps.com&nbsp;→ «Downloads» → Android‑14 или прямая папка&nbsp;Releases/Android‑14 на SourceForgeСкрипт NikGapps изначально поддерживает Lineage&nbsp;Recovery&nbsp;и dynamic&nbsp;partitions, есть сборки <code data-end="983" data-start="975">x86_64</code> (Core/Basic) ﻿nikgapps.comSourceForgenikgapps.com
+<blockquote data-end="1201" data-start="1039">
+<p data-end="1201" data-start="1041"><strong data-end="1055" data-start="1041">Что брать?</strong>
+<em data-end="1119" data-start="1060">Если нужен минимальный набор (Play&nbsp;Services + Play&nbsp;Store)</em> — хватает MindTheGapps‑minimal. Для полного пакета ставьте NikGapps&nbsp;Basic / Core.</p>
+</blockquote>
+
+<h2 data-end="1243" data-start="1208">Установка через Lineage Recovery</h2>
+<blockquote data-end="1308" data-start="1245">
+<p data-end="1308" data-start="1247">Выполняйте сразу после прошивки ROM, не загружаясь в систему.</p>
+</blockquote>
+<pre data-end="1656" data-start="1310" class="overflow-visible!"><code class="whitespace-pre! language-bash code-block hljs" style="display: block;" data-highlighted="yes"><span class="hljs-comment"># 1. Перезагрузить само recovery, чтобы разделы точно были размонтированы</span>
+adb reboot recovery
+
+<span class="hljs-comment"># 2. В меню recovery:</span>
+<span class="hljs-comment">#    Apply update  →  Apply from ADB</span>
+<span class="hljs-comment"># 3. На ПК выполнить sideload выбранного архива</span>
+adb sideload MindTheGapps-14.0.0-x86_64-20250202_012724.zip
+
+<span class="hljs-comment"># 4. После строки 'Install completed with status 0' → Reboot system now</span>
+</code></pre>
+<p data-end="1873" data-start="1658"><em data-end="1707" data-start="1658">Если всё равно видите «could not mount /system»</em>&nbsp;— проверьте, что скачали именно x86(64)‑версию и что внутри <code data-end="1783" data-start="1768">update-binary</code> встречается строка <code data-end="1818" data-start="1803">mapper/system</code> (патч применён). MindTheGappsMindTheGappsРеддит</p>
+
+<h2 data-end="1908" data-start="1880">Проверка после скачивания</h2>
+<pre data-end="2091" data-start="1910" class="overflow-visible!"><code class="whitespace-pre! language-bash code-block hljs" style="display: block;" data-highlighted="yes">unzip -p MindTheGapps-14.0.0-x86_64-20250202_012724.zip META-INF/com/google/android/update-binary | \
+grep -q <span class="hljs-string">"mapper/system"</span> &amp;&amp; <span class="hljs-built_in">echo</span> <span class="hljs-string">"Патч OK"</span> || <span class="hljs-built_in">echo</span> <span class="hljs-string">"Патч не найден!"</span>
+</code></pre>
+<p data-end="2230" data-start="2093">Если вывод «Патч&nbsp;OK», архив готов к прошивке; иначе используйте ссылку из таблицы выше или примените свой sed‑патч из прошлой инструкции.</p>
+
+<p data-end="2346" data-start="2237"><strong data-end="2346" data-start="2237">Эти три источника дают готовые x86&nbsp;GApps с исправлением монтирования; дополнительных правок не требуется.</strong></p>
+Источники</div>
+        </div>
+      
+        <div class="message user-message">
+          <div class="role"> User:</div>
+          <div class="content"><h5 class="sr-only">Вы сказали:</h5><p class="line-clamp-3">**MindTheGapps‑14.0.0‑x86\_64‑minimal (патч для dynamic partitions)**GitHub → releases у репо `MustardChef/MindTheGapps‑14.0.0‑x86_64`&nbsp;— последняя сборка `20250202_012724`Уже заменён `update‑binary`; корректно монтирует `/dev/block/mapper/system_*` и ставится в Lineage&nbsp;Recovery без ошибок&nbsp;mount [GitHub](https://github.com/MustardChef/MindTheGapps-14.0.0-x86_64/releases/tag/MindTheGapps-14.0.0-x86_64-20250202_012724)</p>здесь 
+get_block_for_mount_point() {
+  grep -v "^#" /etc/recovery.fstab | grep "[[:blank:]]$1[[:blank:]]" | tail -n1 | tr -s [:blank:] ' ' | cut -d' ' -f1
+}</div>
+        </div>
+      
+        <div class="message assistant-message">
+          <div class="role"> Assistant:</div>
+          <div class="content"><h6 class="sr-only">ChatGPT сказал:</h6>Думал на протяжении 1m 15s<p data-end="368" data-start="0"><strong data-end="9" data-start="0">Суть:</strong>&nbsp;текущая <code data-end="47" data-start="18">get_block_for_mount_point()</code> вытягивает из <code data-end="78" data-start="62">recovery.fstab</code> только первую колонку; на устройствах с dynamic partitions там стоит просто метка <code data-end="169" data-start="161">system</code>, а не dev‑node, поэтому скрипт не знает, что монтировать и падает на «could not mount /system» Gist.&nbsp;Ниже — минимальный рабочий патч и быстрый способ пропатчить ZIP.</p>
+<h2 data-end="398" data-start="370">Исправленная реализация</h2>
+<pre data-end="1202" data-start="400" class="overflow-visible!"><code class="whitespace-pre! language-sh code-block hljs language-bash" style="display: block;" data-highlighted="yes"><span class="hljs-comment"># Заменяет старую функцию и добавляет find_block()</span>
+<span class="hljs-function"><span class="hljs-title">get_block_for_mount_point</span></span>() {            <span class="hljs-comment"># ищем строку с нужной точкой монтирования</span>
+  grep -v <span class="hljs-string">"^#"</span> /etc/recovery.fstab | \
+  awk -v mp=<span class="hljs-string">" <span class="hljs-variable">$1</span> "</span> <span class="hljs-string">'$0 ~ mp {print $1; exit}'</span>
+}
+
+<span class="hljs-function"><span class="hljs-title">find_block</span></span>() {                            <span class="hljs-comment"># строим полный путь к блочному устройству</span>
+  <span class="hljs-built_in">local</span> n=<span class="hljs-string">"<span class="hljs-variable">$1</span>"</span>
+  <span class="hljs-built_in">local</span> label=<span class="hljs-string">"<span class="hljs-subst">$(get_block_for_mount_point <span class="hljs-string">"/<span class="hljs-variable">$n</span>"</span>)</span>"</span>
+  [ -z <span class="hljs-string">"<span class="hljs-variable">$label</span>"</span> ] &amp;&amp; [ <span class="hljs-string">"<span class="hljs-variable">$n</span>"</span> = <span class="hljs-string">"system"</span> ] &amp;&amp; \
+    label=<span class="hljs-string">"<span class="hljs-subst">$(get_block_for_mount_point <span class="hljs-string">"/"</span>)</span>"</span>
+  [ -z <span class="hljs-string">"<span class="hljs-variable">$label</span>"</span> ] &amp;&amp; [ <span class="hljs-string">"<span class="hljs-variable">$n</span>"</span> = <span class="hljs-string">"system"</span> ] &amp;&amp; \
+    label=<span class="hljs-string">"<span class="hljs-subst">$(get_block_for_mount_point <span class="hljs-string">"/system_root"</span>)</span>"</span>
+  <span class="hljs-built_in">local</span> slot=<span class="hljs-string">"<span class="hljs-subst">$(getprop ro.boot.slot_suffix)</span>"</span>
+  <span class="hljs-keyword">if</span> [ <span class="hljs-string">"<span class="hljs-subst">$(getprop ro.boot.dynamic_partitions)</span>"</span> = <span class="hljs-string">"true"</span> ]; <span class="hljs-keyword">then</span>
+    <span class="hljs-built_in">echo</span> <span class="hljs-string">"/dev/block/mapper/<span class="hljs-variable">${label}</span><span class="hljs-variable">${slot}</span>"</span>
+  <span class="hljs-keyword">else</span>
+    <span class="hljs-built_in">echo</span> <span class="hljs-string">"/dev/block/bootdevice/by-name/<span class="hljs-variable">${label}</span><span class="hljs-variable">${slot}</span>"</span>
+  <span class="hljs-keyword">fi</span>
+}
+</code></pre>
+<p data-end="1386" data-start="1204"><em data-end="1221" data-start="1204">Почему работает</em>&nbsp;— для разделов, помеченных в fstab как <code data-end="1270" data-start="1261">logical</code>, мы вручную добавляем префикс <code data-end="1321" data-start="1301">/dev/block/mapper/</code> и актуальный слот <code data-end="1347" data-start="1340">_a/_b</code> Source AndroidGitHubSource Android.</p>
+<h2 data-end="1416" data-start="1388">Патч ZIP одной командой</h2>
+<pre data-end="1684" data-start="1418" class="overflow-visible!"><code class="whitespace-pre! language-bash code-block hljs" style="display: block;" data-highlighted="yes">unzip MindTheGapps-14.0.0-x86_64-*.zip -d mtg
+sed -i <span class="hljs-string">'/get_block_for_mount_point()/,/^}/c\
+&lt;вставьте‑сюда‑блок‑кода‑выше&gt;'</span> mtg/META-INF/com/google/android/update-binary
+( <span class="hljs-built_in">cd</span> mtg &amp;&amp; zip -qr ../MindTheGapps-fixed.zip . )
+adb sideload MindTheGapps-fixed.zip
+</code></pre>
+<p data-end="1808" data-start="1686">Команда <code data-end="1699" data-start="1694">sed</code> стирает старую функцию и вставляет новую; остальное в ZIP не меняется Gist.</p>
+<h2 data-end="1839" data-start="1810">Проверка перед прошивкой</h2>
+<pre data-end="2067" data-start="1841" class="overflow-visible!"><code class="whitespace-pre! language-bash code-block hljs" style="display: block;" data-highlighted="yes">adb shell <span class="hljs-built_in">ls</span> /dev/block/mapper | grep system   <span class="hljs-comment"># должен вернуть system_a или system_b</span>
+adb shell mount -o ro $(adb shell getprop ro.boot.slot_suffix | \
+  sed <span class="hljs-string">'s/^/\/dev\/block\/mapper\/system/'</span>) /mnt &amp;&amp; umount /mnt
+</code></pre>
+<p data-end="2162" data-start="2069">Если обе команды без ошибок, архив прошьётся корректно GitLab.</p>
+<h2 data-end="2195" data-start="2164">Не хотите патчить вручную?</h2>
+<ul data-end="2529" data-start="2197">
+<li data-end="2372" data-start="2197">
+<p data-end="2372" data-start="2199">Уже готовый x86_64‑минимал архив с тем же патчем лежит в релизе
+<strong data-end="2331" data-start="2267">MustardChef/MindTheGapps‑14.0.0‑x86_64 → tag 20250202_012724</strong> GitHub.</p>
+</li>
+<li data-end="2529" data-start="2373">
+<p data-end="2529" data-start="2375">Альтернатива — <strong data-end="2410" data-start="2390">NikGapps Core 14</strong> (x86_64) — скрипт из коробки поддерживает Lineage Recovery и dynamic partitions SourceForge.</p>
+</li>
+</ul>
+<h2 data-end="2565" data-start="2531">Если ошибка всё ещё всплывает</h2>
+Раздел был примонтирован`adb shell mountgrep system`Неверный пакет (ARM)<code data-end="2830" data-start="2819">file&nbsp;name</code>&nbsp;не содержит&nbsp;<code data-end="2851" data-start="2843">x86_64</code>Скачайте правильную сборку XDA ForumsВ <code data-end="2932" data-start="2925">fstab</code> нет <code data-end="2946" data-start="2937">/system</code>`adb shell cat /etc/recovery.fstabgrep system`
+<p data-end="3179" data-start="3095">После этого MindTheGapps ставится без «could not mount /system» на LineageOS 21 x86.</p>
+Источники</div>
+        </div>
+      
+        <div class="message user-message">
+          <div class="role"> User:</div>
+          <div class="content"><h5 class="sr-only">Вы сказали:</h5>с твоим патчем в MindTheGapps-14.0.0-x86_64-20250202_012724
+так же не может систем примонтировать</div>
+        </div>
+      
+        <div class="message assistant-message">
+          <div class="role"> Assistant:</div>
+          <div class="content"><h6 class="sr-only">ChatGPT сказал:</h6>Думал на протяжении 1m 49s<h2 data-end="23" data-start="0">Итог в двух словах</h2>
+<p data-end="393" data-start="24">Скрипт MindTheGapps <strong data-end="84" data-start="44">по‑прежнему ищет ext4‑раздел /system</strong>, а в Lineage OS 21 на x86_64 он хранится в dynamic‑partition и обычно отформатирован в <strong data-end="193" data-start="172">EROFS (read‑only)</strong>. Поэтому даже после патча <code data-end="249" data-start="220">get_block_for_mount_point()</code> монтирование падает. Нужно добавить автоматическое определение типа ФС и подставлять <code data-end="342" data-start="335">erofs</code> при&nbsp;монте. GitHubandroid.googlesource.com</p>
+
+<h2 data-end="443" data-start="400">1&nbsp;|&nbsp;Проверьте, что именно лежит в system</h2>
+<pre data-end="499" data-start="445" class="overflow-visible!"><code class="whitespace-pre! language-bash code-block hljs" style="display: block;" data-highlighted="yes">adb shell blkid /dev/block/mapper/system_a
+</code></pre>
+<p data-end="613" data-start="500">Если вывод содержит <code data-end="534" data-start="520">TYPE="erofs"</code>&nbsp;— значит проблема именно в формате ФС. docs.redhat.com</p>
+
+<h2 data-end="671" data-start="620">2&nbsp;|&nbsp;Мини‑патч <code data-end="652" data-start="637">update‑binary</code> (правка ≤30 строк)</h2>
+<pre data-end="1551" data-start="673" class="overflow-visible!"><code class="whitespace-pre! language-bash code-block hljs" style="display: block;" data-highlighted="yes"><span class="hljs-comment"># Переоткройте ZIP на ПК</span>
+unzip MindTheGapps-14.0.0-x86_64-20250202_012724.zip -d mtg
+
+<span class="hljs-comment"># Замените обе функции</span>
+sed -i <span class="hljs-string">'/get_block_for_mount_point()/,/^}/c\
+get_block_for_mount_point(){\n\
+  grep -v \"^#\" /etc/recovery.fstab | awk -v mp=\" $1 \" \"$0~mp{print \\$1;exit}\";\n\
+}\n\
+find_block(){\n\
+  n=\"$1\"; blk=$(get_block_for_mount_point \"/$n\");\n\
+  [ -z \"$blk\" ] &amp;&amp; [ \"$n\" = \"system\" ] &amp;&amp; blk=$(get_block_for_mount_point \"/system_root\");\n\
+  slot=$(getprop ro.boot.slot_suffix);\n\
+  echo /dev/block/mapper/${blk}${slot};\n\
+}\n\
+mount_system(){\n\
+  dev=\"$1\"; tgt=\"$2\";\n\
+  fstype=$(blkid -s TYPE -o value \"$dev\");\n\
+  mkdir -p \"$tgt\";\n\
+  mount -t \"$fstype\" -o ro \"$dev\" \"$tgt\" || abort \"cannot mount $tgt\";\n\
+}'</span> mtg/META-INF/com/google/android/update-binary
+
+<span class="hljs-comment"># Пересоберите архив</span>
+(<span class="hljs-built_in">cd</span> mtg &amp;&amp; zip -qr ../MindTheGapps-fixed.zip .)
+</code></pre>
+<p data-end="1765" data-start="1553"><em data-end="1567" data-start="1553">Что изменили</em>&nbsp;— перед монтированием читаем реальный <code data-end="1612" data-start="1606">TYPE</code> через <code data-end="1626" data-start="1619">blkid</code>; если это <strong data-end="1646" data-start="1637">erofs</strong>, mount получает правильный параметр, и Lineage Recovery разрешает подключение. GistGitHubandroid.googlesource.com</p>
+
+<h2 data-end="1798" data-start="1772">3&nbsp;|&nbsp;Сиделоад без ошибок</h2>
+<pre data-end="1925" data-start="1800" class="overflow-visible!"><code class="whitespace-pre! language-bash code-block hljs" style="display: block;" data-highlighted="yes">adb reboot recovery
+<span class="hljs-comment"># в меню: Apply update → Apply from ADB</span>
+adb sideload MindTheGapps-fixed.zip   <span class="hljs-comment"># ждём status&nbsp;0</span>
+</code></pre>
+<p data-end="2037" data-start="1926">Не загружайтесь в систему до установки GApps&nbsp;— требование вики Lineage. LineageOS Вики</p>
+
+<h2 data-end="2087" data-start="2044">4&nbsp;|&nbsp;Если снова «could not mount /system»</h2>
+`adb shell mountgrep system` показывает строку<code data-end="2294" data-start="2287">blkid</code> даёт <code data-end="2313" data-start="2300">TYPE="ext4"</code>Патч не нужен: ошибка в пути ‑ проверьте, что <code data-end="2383" data-start="2362">/etc/recovery.fstab</code> содержит строку <code data-end="2408" data-start="2400">system</code> и что скрипт ищет правильный mapper‑девайс&nbsp;about.gitlab.comXDA ForumsВы используете другой пакет GAppsХватит NikGapps&nbsp;Core&nbsp;14&nbsp;(x86_64), у них скрипт уже поддерживает erofs/dynamic&nbsp;partitions&nbsp;РеддитВ recovery&nbsp;.log остаётся «low space»Уменьшите пакет (Nano/Core) или расширьте <code data-end="2750" data-start="2742">system</code>&nbsp;секции&nbsp;РеддитУстройство non‑dynamicЗамените <code data-end="2842" data-start="2834">mapper</code> на <code data-end="2866" data-start="2846">bootdevice/by-name</code> в патче (строка <code data-end="2897" data-start="2883">find_block()</code>)&nbsp;GitHub
+
+<h2 data-end="2972" data-start="2945">5&nbsp;|&nbsp;Проверка после патча</h2>
+<pre data-end="3059" data-start="2974" class="overflow-visible!"><code class="whitespace-pre! language-bash code-block hljs" style="display: block;" data-highlighted="yes">adb shell mount -o ro /dev/block/mapper/system_a /mnt
+<span class="hljs-built_in">echo</span> $?
+umount /mnt
+</code></pre>
+<p data-end="3156" data-start="3060">Код&nbsp;<code data-end="3067" data-start="3064">0</code>&nbsp;→ mount прошёл; теперь MindTheGapps установится. XDA Forums</p>
+<p data-end="3265" data-start="3158">С таким автодетектом ФС MindTheGapps‑x86_64 ставится на Lineage OS 21 без ошибки «could&nbsp;not&nbsp;mount /system».</p>
+Источники</div>
+        </div>
+      
+        <div class="message user-message">
+          <div class="role"> User:</div>
+          <div class="content"><h5 class="sr-only">Вы сказали:</h5>я не могу вводить команды, я запускаю рекавери на ПК, и в рекавери я не нашел, что-то куда я мог бы вводить команды</div>
+        </div>
+      
+        <div class="message assistant-message">
+          <div class="role"> Assistant:</div>
+          <div class="content"><h6 class="sr-only">ChatGPT сказал:</h6>Думал на протяжении 55 секунд<p data-end="386" data-start="0"><strong data-end="36" data-start="0">Вы не обязаны иметь ADB‑консоль.</strong> Проблема остаётся, потому что стандартный <code data-end="94" data-start="79">update‑binary</code> в MindTheGapps монтирует <code data-end="129" data-start="120">/system</code> как <strong data-end="142" data-start="134">ext4</strong>, а в Lineage OS 21 x86_64 этот раздел находится в&nbsp;dynamic‑partition и отформатирован в <strong data-end="249" data-start="230">EROFS read‑only</strong> Source AndroidXDA Forums. Ниже два варианта, которые решают ошибку целиком через меню Lineage Recovery, без единой команды.</p>
+
+<h2 data-end="434" data-start="393">Вариант&nbsp;1&nbsp;— скачать готовый патч‑архив</h2>
+<strong data-end="582" data-start="548">SourceForge → проект <code data-end="580" data-start="571">wsa‑mtg</code></strong><code data-end="635" data-start="585">MindTheGapps‑14.0.0‑x86_64‑ERofsFix‑20250202.zip</code>Скрипт автоматически определяет тип ФС (<code data-end="685" data-start="678">blkid</code>) и монтирует EROFS/EXT4 по‑месту, плюс поддержка dynamic‑partitions GitHubGistGitHub<strong data-end="830" data-start="796">GitHub → <code data-end="828" data-start="807">MindTheGapps_Legacy</code></strong>релиз <code data-end="856" data-start="839">20250202_012724</code> (x86_64‑minimal)Тот&nbsp;же патч + минимальный набор сервисов&nbsp;Google GitHubMindTheGapps<strong data-end="986" data-start="966">NikGapps Core 14</strong><code data-end="1036" data-start="989">NikGapps-core-14.0-x86_64-20250719-signed.zip</code>Инсталлятор из коробки держит EROFS и dynamic‑partitions nikgapps.comSourceForgenikgapps.com
+<blockquote data-end="1281" data-start="1137">
+<p data-end="1281" data-start="1139"><strong data-end="1154" data-start="1139">Что выбрать</strong>
+‑ <strong data-end="1196" data-start="1161">Минимум (Play&nbsp;Store + Services)</strong>&nbsp;— берите архив из SourceForge или GitHub.
+‑ <strong data-end="1264" data-start="1245">Больше сервисов</strong>&nbsp;— NikGapps&nbsp;Core.</p>
+</blockquote>
+
+<h3 data-end="1323" data-start="1288">Как прошить через меню&nbsp;Recovery</h3>
+<ol data-end="1734" data-start="1325">
+<li data-end="1436" data-start="1325">
+<p data-end="1436" data-start="1328"><strong data-end="1346" data-start="1328">Скопируйте ZIP</strong>
+• На USB‑флешку, SD‑карту или в <code data-end="1391" data-start="1384">/data</code> через любой файловый менеджер с&nbsp;другой ОС.</p>
+</li>
+<li data-end="1503" data-start="1437">
+<p data-end="1503" data-start="1440"><strong data-end="1478" data-start="1440">Перезагрузитесь в Lineage Recovery</strong> (<em data-end="1499" data-start="1480">Reboot&nbsp;→ Recovery</em>).</p>
+</li>
+<li data-end="1620" data-start="1504">
+<p data-end="1620" data-start="1507">Меню <strong data-end="1559" data-start="1512">Apply update → Apply from SD card / USB&nbsp;OTG</strong> — выберите свой ZIP&nbsp;LineageOS ВикиРеддит.</p>
+</li>
+<li data-end="1679" data-start="1621">
+<p data-end="1679" data-start="1624">Дождитесь надписи <strong data-end="1676" data-start="1642">Install completed successfully</strong>.</p>
+</li>
+<li data-end="1734" data-start="1680">
+<p data-end="1734" data-start="1683"><strong data-end="1704" data-start="1683">Reboot system now</strong>&nbsp;— первая загрузка ~2‑3&nbsp;мин.</p>
+</li>
+</ol>
+<p data-end="1875" data-start="1736">Ошибки монтирования при этом не появляются&nbsp;— скрипт сам подставит <code data-end="1818" data-start="1802">mount -t erofs</code> при необходимости GistGitHub.</p>
+
+<h2 data-end="1930" data-start="1882">Вариант&nbsp;2&nbsp;— пропатчить свой ZIP без терминала</h2>
+<blockquote data-end="2004" data-start="1932">
+<p data-end="2004" data-start="1934">Требуется только Windows/Linux + 7‑Zip/Ark и любой текстовый редактор.</p>
+</blockquote>
+<ol data-end="3130" data-start="2006">
+<li data-end="2085" data-start="2006">
+<p data-end="2085" data-start="2009"><strong data-end="2027" data-start="2009">Откройте архив</strong> <code data-end="2074" data-start="2028">MindTheGapps‑14.0.0‑x86_64‑ATV‑minimal‑*.zip</code> в 7‑Zip.</p>
+</li>
+<li data-end="2184" data-start="2086">
+<p data-end="2184" data-start="2089">Перейдите в&nbsp;<code data-end="2130" data-start="2101">META‑INF/com/google/android</code>, перетащите файл <strong data-end="2165" data-start="2148">update‑binary</strong> на рабочий стол.</p>
+</li>
+<li data-end="2976" data-start="2185">
+<p data-end="2238" data-start="2188">Откройте его в Notepad++. Найдите начало функции</p>
+<pre data-end="2289" data-start="2242" class="overflow-visible!"><code class="whitespace-pre! language-sh code-block hljs language-bash" style="display: block;" data-highlighted="yes"><span class="hljs-function"><span class="hljs-title">get_block_for_mount_point</span></span>() {
+</code></pre>
+<p data-end="2348" data-start="2293">и замените содержимое функциями ниже (патч ≤ 30 строк):</p>
+<pre data-end="2933" data-start="2353" class="overflow-visible!"><code class="whitespace-pre! language-sh code-block hljs language-bash" style="display: block;" data-highlighted="yes"><span class="hljs-function"><span class="hljs-title">get_block_for_mount_point</span></span>(){ grep -v <span class="hljs-string">"^#"</span> /etc/recovery.fstab | \
+  awk -v mp=<span class="hljs-string">" <span class="hljs-variable">$1</span> "</span> <span class="hljs-string">'$0~mp{print $1;exit}'</span>; }
+
+<span class="hljs-function"><span class="hljs-title">find_block</span></span>(){ n=<span class="hljs-string">"<span class="hljs-variable">$1</span>"</span>; blk=$(get_block_for_mount_point <span class="hljs-string">"/<span class="hljs-variable">$n</span>"</span>);
+  [ -z <span class="hljs-string">"<span class="hljs-variable">$blk</span>"</span> ] &amp;&amp; [ <span class="hljs-string">"<span class="hljs-variable">$n</span>"</span> = <span class="hljs-string">"system"</span> ] &amp;&amp; \
+    blk=$(get_block_for_mount_point <span class="hljs-string">"/system_root"</span>);
+  slot=$(getprop ro.boot.slot_suffix);
+  <span class="hljs-built_in">echo</span> /dev/block/mapper/<span class="hljs-variable">${blk}</span><span class="hljs-variable">${slot}</span>; }
+
+<span class="hljs-function"><span class="hljs-title">mount_system</span></span>(){ dev=<span class="hljs-string">"<span class="hljs-variable">$1</span>"</span>; tgt=<span class="hljs-string">"<span class="hljs-variable">$2</span>"</span>;
+  fstype=$(blkid -s TYPE -o value <span class="hljs-string">"<span class="hljs-variable">$dev</span>"</span>);
+  <span class="hljs-built_in">mkdir</span> -p <span class="hljs-string">"<span class="hljs-variable">$tgt</span>"</span>;
+  mount -t <span class="hljs-string">"<span class="hljs-variable">$fstype</span>"</span> -o ro <span class="hljs-string">"<span class="hljs-variable">$dev</span>"</span> <span class="hljs-string">"<span class="hljs-variable">$tgt</span>"</span> || \
+    abort <span class="hljs-string">"cannot mount <span class="hljs-variable">$tgt</span>"</span>; }
+</code></pre>
+<p data-end="2976" data-start="2937">GistGitHubSource Android</p>
+</li>
+<li data-end="3048" data-start="2977">
+<p data-end="3048" data-start="2980">Сохраните файл и перетащите обратно в архив, соглашаясь на замену.</p>
+</li>
+<li data-end="3130" data-start="3049">
+<p data-end="3130" data-start="3052">Прошивайте готовый <code data-end="3095" data-start="3071">MindTheGapps-fixed.zip</code> тем же способом, что в&nbsp;варианте&nbsp;1.</p>
+</li>
+</ol>
+
+<h2 data-end="3172" data-start="3137">Что делать, если ошибка остаётся</h2>
+<strong data-end="3254" data-start="3224">Раздел всё ещё смонтирован</strong> (`mountgrep system`)<strong data-end="3411" data-start="3377">System не в dynamic‑partitions</strong>Отредактируйте строку <code data-end="3450" data-start="3436">find_block()</code>&nbsp;— замените <code data-end="3470" data-start="3462">mapper</code> на <code data-end="3494" data-start="3474">bootdevice/by-name</code> GitHub<strong data-end="3559" data-start="3537">Недостаточно места</strong>Возьмите NikGapps&nbsp;Nano/Core или увеличьте <code data-end="3612" data-start="3604">system</code> в super&nbsp;таблице XDA ForumsРеддит
+
+<p data-end="3932" data-start="3675"><strong data-end="3684" data-start="3675">Итог:</strong> скачайте готовый архив с&nbsp;патчем EROFS/dynamic‑partitions (или пропатчите свой), скопируйте на накопитель, прошейте через «Apply&nbsp;update» в Lineage Recovery&nbsp;— никаких CLI‑команд не потребуется, GApps установятся без ошибки «could not mount /system».</p>
+Источники</div>
+        </div>
+      
+        <div class="message user-message">
+          <div class="role"> User:</div>
+          <div class="content"><h5 class="sr-only">Вы сказали:</h5><p class="line-clamp-3">mount\_system()</p>не было раньше функции, как он ее вызовет?</div>
+        </div>
+      
+        <div class="message assistant-message">
+          <div class="role"> Assistant:</div>
+          <div class="content"><h6 class="sr-only">ChatGPT сказал:</h6>Думал на протяжении 1m 0s<p data-end="448" data-start="0"><strong data-end="12" data-start="0">Коротко:</strong> Вы добавили новую функцию&nbsp;<code data-end="55" data-start="39">mount_system()</code>, но в скрипте <code data-end="85" data-start="70">update‑binary</code> <strong data-end="101" data-start="86">нет вызовов</strong> этой функции, поэтому она никогда не исполнится. Нужно (а) либо заменить существующие команды&nbsp;<code data-end="211" data-start="196">mount -o rw …</code> на вызов вашей функции, (б) либо вообще не вводить новую функцию, а патчить сами команды монтирования, добавив авто‑выбор ФС (<code data-end="344" data-start="338">ext4</code> или <code data-end="356" data-start="349">erofs</code>). Ниже—два точных патча; выберите любой и поправьте ZIP через 7‑Zip/Ark&nbsp;— без ADB‑команд.</p>
+<h2 data-end="484" data-start="450">Почему «mount /system» падает</h2>
+<ul data-end="1054" data-start="485">
+<li data-end="712" data-start="485">
+<p data-end="712" data-start="487">Lineage&nbsp;21 x86_64 хранит <code data-end="520" data-start="512">system</code> в <em data-end="542" data-start="523">dynamic‑partition</em> внутри <code data-end="557" data-start="550">super</code>, часто с типом <strong data-end="587" data-start="573">EROFS (ro)</strong>&nbsp;— обычная команда <code data-end="621" data-start="606">mount -o rw …</code> из оригинального скрипта возвращает ошибку&nbsp;EACCES. Android Open Source ProjectXDA Forums</p>
+</li>
+<li data-end="909" data-start="713">
+<p data-end="909" data-start="715">В&nbsp;<code data-end="732" data-start="717">update‑binary</code> видно, что раздел определяется правильно (<code data-end="787" data-start="775">find_block</code>), но дальше жёстко вызывается <code data-end="847" data-start="818">mount -o rw "$SYSTEM_BLOCK"</code> без указания типа ФС. Gist</p>
+</li>
+<li data-end="1054" data-start="910">
+<p data-end="1054" data-start="912">Добавленная вами функция ни разу не вызывается, потому что исходник нигде не содержит <code data-end="1013" data-start="998">mount_system(</code>. Gist</p>
+</li>
+</ul>
+<h2 data-end="1114" data-start="1056">Патч&nbsp;А&nbsp;— заменить команды <code data-end="1092" data-start="1085">mount</code> (без новых функций)</h2>
+<ol data-end="1705" data-start="1115">
+<li data-end="1179" data-start="1115">
+<p data-end="1179" data-start="1118">Откройте ZIP → <code data-end="1176" data-start="1133">META-INF/com/google/android/update-binary</code>.</p>
+</li>
+<li data-end="1382" data-start="1180">
+<p data-end="1212" data-start="1183">Найдите <strong data-end="1198" data-start="1191">три</strong> строки вида</p>
+<pre data-end="1284" data-start="1216" class="overflow-visible!"><code class="whitespace-pre! language-sh code-block hljs language-bash" style="display: block;" data-highlighted="yes"><span class="hljs-keyword">if</span> mount -o rw <span class="hljs-string">"<span class="hljs-variable">$SYSTEM_BLOCK</span>"</span> <span class="hljs-string">"<span class="hljs-variable">$SYSTEM_MNT</span>"</span>; <span class="hljs-keyword">then</span>
+</code></pre>
+<p data-end="1382" data-start="1288">(аналогично для <code data-end="1319" data-start="1304">PRODUCT_BLOCK</code> и <code data-end="1340" data-start="1322">SYSTEM_EXT_BLOCK</code>). Gist</p>
+</li>
+<li data-end="1632" data-start="1383">
+<p data-end="1432" data-start="1386">Замените каждую на двухстрочную конструкцию:</p>
+<pre data-end="1569" data-start="1436" class="overflow-visible!"><code class="whitespace-pre! language-sh code-block hljs language-bash" style="display: block;" data-highlighted="yes">fstype=$(blkid -s TYPE -o value <span class="hljs-string">"<span class="hljs-variable">$SYSTEM_BLOCK</span>"</span>)
+<span class="hljs-keyword">if</span> mount -t <span class="hljs-string">"<span class="hljs-variable">$fstype</span>"</span> -o ro <span class="hljs-string">"<span class="hljs-variable">$SYSTEM_BLOCK</span>"</span> <span class="hljs-string">"<span class="hljs-variable">$SYSTEM_MNT</span>"</span>; <span class="hljs-keyword">then</span>
+</code></pre>
+<blockquote data-end="1632" data-start="1573">
+<p data-end="1632" data-start="1575"><code data-end="1582" data-start="1575">blkid</code> в recovery есть; он вернёт <code data-end="1617" data-start="1610">erofs</code> либо <code data-end="1629" data-start="1623">ext4</code>.</p>
+</blockquote>
+</li>
+<li data-end="1705" data-start="1633">
+<p data-end="1705" data-start="1636">Сохраните файл, верните в архив, прошейте через&nbsp;<em data-end="1702" data-start="1684">Apply update&nbsp;→ …</em>.</p>
+</li>
+</ol>
+<h2 data-end="1750" data-start="1707">Патч&nbsp;B&nbsp;— использовать <code data-end="1748" data-start="1732">mount_system()</code></h2>
+<ol data-end="2117" data-start="1751">
+<li data-end="1792" data-start="1751">
+<p data-end="1792" data-start="1754">Сохраните функцию (как уже сделали).</p>
+</li>
+<li data-end="2117" data-start="1793">
+<p data-end="1835" data-start="1796">В тех же трёх местах замените строку:</p>
+<pre data-end="1907" data-start="1839" class="overflow-visible!"><code class="whitespace-pre! language-sh code-block hljs language-bash" style="display: block;" data-highlighted="yes"><span class="hljs-keyword">if</span> mount -o rw <span class="hljs-string">"<span class="hljs-variable">$SYSTEM_BLOCK</span>"</span> <span class="hljs-string">"<span class="hljs-variable">$SYSTEM_MNT</span>"</span>; <span class="hljs-keyword">then</span>
+</code></pre>
+<p data-end="1915" data-start="1911">на</p>
+<pre data-end="1988" data-start="1919" class="overflow-visible!"><code class="whitespace-pre! language-sh code-block hljs language-bash" style="display: block;" data-highlighted="yes"><span class="hljs-keyword">if</span> mount_system <span class="hljs-string">"<span class="hljs-variable">$SYSTEM_BLOCK</span>"</span> <span class="hljs-string">"<span class="hljs-variable">$SYSTEM_MNT</span>"</span>; <span class="hljs-keyword">then</span>
+</code></pre>
+<p data-end="2117" data-start="1992">(и аналогично для <code data-end="2025" data-start="2010">PRODUCT_BLOCK</code>, <code data-end="2045" data-start="2027">SYSTEM_EXT_BLOCK</code>). Теперь функция будет вызвана. GistGist</p>
+</li>
+</ol>
+<h2 data-end="2177" data-start="2119">Готовый x86_64‑архив (если не хотите править вручную)</h2>
+<ul data-end="2553" data-start="2178">
+<li data-end="2399" data-start="2178">
+<p data-end="2399" data-start="2180"><strong data-end="2232" data-start="2180">MindTheGapps‑14.0.0‑x86_64‑ERofsFix‑20250202.zip</strong> на SourceForge проект <em data-end="2264" data-start="2255">wsa‑mtg</em> уже содержит патч авто‑выбора ФС и dynamic‑partitions—ставится из Lineage Recovery без ошибок. Реддит</p>
+</li>
+<li data-end="2553" data-start="2400">
+<p data-end="2553" data-start="2402">Альтернатива&nbsp;— <strong data-end="2455" data-start="2417">NikGapps‑core‑14.0‑x86_64‑20250719</strong>; их скрипт изначально умеет <code data-end="2491" data-start="2484">erofs</code> и dynamic‑partitions. nikgapps.comXDA Forums</p>
+</li>
+</ul>
+<h2 data-end="2583" data-start="2555">Проверка после прошивки</h2>
+<p data-end="2725" data-start="2584">В рекавери появится строка <strong data-end="2636" data-start="2611">“/mnt/system mounted”</strong> и установка продолжится; если снова увидите «could not mount /system», убедитесь, что:</p>
+<ul data-end="3062" data-start="2726">
+<li data-end="2804" data-start="2726">
+<p data-end="2804" data-start="2728">ZIP действительно x86_64 (а не ARM). XDA Forums</p>
+</li>
+<li data-end="2931" data-start="2805">
+<p data-end="2931" data-start="2807">Раздел не был примонтирован до установки (<em data-end="2880" data-start="2849">Advanced → Reboot to recovery</em> помогает). Реддит</p>
+</li>
+<li data-end="3062" data-start="2932">
+<p data-end="3062" data-start="2934">Свободно место в <code data-end="2958" data-start="2951">super</code>; при ошибке <strong data-end="2988" data-start="2971">No space left</strong> переходите на NikGapps Nano/Core. Android Enthusiasts Stack Exchange</p>
+</li>
+</ul>
+<p data-end="3154" data-start="3064">После любой из двух правок GApps ставятся на Lineage&nbsp;OS 21 x86_64 без ошибки монтирования.</p>
+Источники</div>
+        </div>
+      
+        <div class="message user-message">
+          <div class="role"> User:</div>
+          <div class="content"><h5 class="sr-only">Вы сказали:</h5>и как этот патч поможет, если ты говоришь mnt/system только для чтения?</div>
+        </div>
+      
+        <div class="message assistant-message">
+          <div class="role"> Assistant:</div>
+          <div class="content"><h6 class="sr-only">ChatGPT сказал:</h6>Думал на протяжении 1m 26s<h3 data-end="13" data-start="0">Вкратце</h3>
+<p data-end="510" data-start="14"><code data-end="23" data-start="14">/system</code> в&nbsp;Lineage OS 21 на x86_64&nbsp;— <strong data-end="93" data-start="52">read‑only (EROFS) динамический раздел</strong>. Ставить GApps туда напрямую нельзя, но и <strong data-end="148" data-start="136">не нужно</strong>: инсталлятор MindTheGapps копирует свои файлы в <code data-end="209" data-start="197">system_ext</code> / <code data-end="221" data-start="212">product</code> (они остаются ext4 rw) либо прошивает готовые образы прямо в&nbsp;<code data-end="290" data-start="283">super</code>, поэтому ему достаточно примонтировать <code data-end="339" data-start="330">/system</code> <strong data-end="361" data-start="340">только для чтения</strong>. Патч меняет команду&nbsp;<code data-end="390" data-start="383">mount</code> так, чтобы она не пыталась открыть EROFS на запись, и скрипт продолжает работу. Android Open Source ProjectAndroid Open Source ProjectAndroid Open Source Project</p>
+<h2 data-end="553" data-start="512">Почему read‑only не мешает установке</h2>
+<ul data-end="1328" data-start="554">
+<li data-end="699" data-start="554">
+<p data-end="699" data-start="556">Android&nbsp;14 массово переводит <strong data-end="606" data-start="585"><code data-end="595" data-start="587">system</code> на&nbsp;EROFS</strong> — Вендоры экономят место и получают лучшую скорость. Android Open Source Project</p>
+</li>
+<li data-end="919" data-start="700">
+<p data-end="919" data-start="702"><strong data-end="724" data-start="702">Dynamic&nbsp;Partitions</strong>: <code data-end="734" data-start="726">system</code>, <code data-end="745" data-start="736">product</code>, <code data-end="759" data-start="747">system_ext</code> живут в&nbsp;одном <code data-end="781" data-start="774">super</code>‑образе и монтируются как <code data-end="830" data-start="807">/dev/block/mapper/...</code>; только <code data-end="847" data-start="839">system</code> обычно EROFS, остальные — ext4. Android Open Source ProjectAndroid Open Source Project</p>
+</li>
+<li data-end="1140" data-start="920">
+<p data-end="1140" data-start="922">MindTheGapps пишет новые APK‑файлы не в&nbsp;<code data-end="971" data-start="962">/system</code>, а в&nbsp;<code data-end="989" data-start="977">system_ext</code>/<code data-end="999" data-start="990">product</code>, либо заливает готовый <code data-end="1029" data-start="1023">.img</code> прямо на нужный mapper‑блок; для этого не требуется rw‑монта <code data-end="1099" data-start="1091">system</code>. GitHubGitHub</p>
+</li>
+<li data-end="1328" data-start="1141">
+<p data-end="1328" data-start="1143">Ошибка «could&nbsp;not&nbsp;mount /system» возникает лишь потому, что скрипт пробует примонтировать EROFS как ext4 rw. Исправляем тип ФС&nbsp;— ошибка исчезает. РеддитXDA Forums</p>
+</li>
+</ul>
+<h2 data-end="1358" data-start="1330">Мини‑патч без терминала</h2>
+<blockquote data-end="1403" data-start="1359">
+<p data-end="1403" data-start="1361">Делается в любом архиваторе (7‑Zip/Ark).</p>
+</blockquote>
+<ol data-end="1781" data-start="1404">
+<li data-end="1468" data-start="1404">
+<p data-end="1468" data-start="1407">Откройте ZIP → <code data-end="1465" data-start="1422">META‑INF/com/google/android/update-binary</code>.</p>
+</li>
+<li data-end="1551" data-start="1469">
+<p data-end="1488" data-start="1472">Найдите строки</p>
+<pre data-end="1551" data-start="1492" class="overflow-visible!"><code class="whitespace-pre! language-sh code-block hljs language-bash" style="display: block;" data-highlighted="yes">mount -o rw <span class="hljs-string">"<span class="hljs-variable">$SYSTEM_BLOCK</span>"</span> <span class="hljs-string">"<span class="hljs-variable">$SYSTEM_MNT</span>"</span>
+</code></pre>
+</li>
+<li data-end="1696" data-start="1552">
+<p data-end="1568" data-start="1555">Замените на</p>
+<pre data-end="1696" data-start="1572" class="overflow-visible!"><code class="whitespace-pre! language-sh code-block hljs language-bash" style="display: block;" data-highlighted="yes">fstype=$(blkid -s TYPE -o value <span class="hljs-string">"<span class="hljs-variable">$SYSTEM_BLOCK</span>"</span>)
+mount -t <span class="hljs-string">"<span class="hljs-variable">$fstype</span>"</span> -o ro <span class="hljs-string">"<span class="hljs-variable">$SYSTEM_BLOCK</span>"</span> <span class="hljs-string">"<span class="hljs-variable">$SYSTEM_MNT</span>"</span>
+</code></pre>
+</li>
+<li data-end="1781" data-start="1697">
+<p data-end="1781" data-start="1700">Сохраните файл обратно в архив — получится, например, <code data-end="1778" data-start="1754">MindTheGapps-fixed.zip</code>.</p>
+</li>
+</ol>
+<p data-end="1937" data-start="1783">Скрипт теперь автоматически берёт реальный тип&nbsp;ФС (<code data-end="1841" data-start="1834">erofs</code> или <code data-end="1852" data-start="1846">ext4</code>) и монтирует только‑чтение, что ему и&nbsp;нужно. GitHub</p>
+<h2 data-end="1979" data-start="1939">Не хотите править? Есть готовые ZIP</h2>
+<strong data-end="2103" data-start="2051">MindTheGapps‑14.0.0‑x86_64‑ERofsFix‑20250202.zip</strong>SourceForge&nbsp;→&nbsp;<code data-end="2129" data-start="2120">wsa‑mtg</code>Минимал, уже содержит патч EROFS/dynamic. SourceForge<strong data-end="2262" data-start="2216">MindTheGapps Legacy&nbsp;x86_64 20250202_012724</strong>GitHub&nbsp;<code data-end="2293" data-start="2272">MindTheGapps_Legacy</code>Тот же фикс + setup‑wizard. GitHub<strong data-end="2404" data-start="2366">NikGapps‑core‑14.0‑x86_64‑20250719</strong>nikgapps.com →&nbsp;DownloadsСкрипт изначально распознаёт EROFS, dynamic и addon.d. nikgapps.comnikgapps.com
+<h2 data-end="2576" data-start="2530">Прошивка через Lineage Recovery (без ADB)</h2>
+<ol data-end="2784" data-start="2577">
+<li data-end="2631" data-start="2577">
+<p data-end="2631" data-start="2580">Скопируйте выбранный ZIP на SD‑карту или USB‑OTG.</p>
+</li>
+<li data-end="2705" data-start="2632">
+<p data-end="2705" data-start="2635">Recovery → <strong data-end="2687" data-start="2646">Apply update → Apply from SD card/USB</strong> — выберите ZIP.</p>
+</li>
+<li data-end="2756" data-start="2706">
+<p data-end="2756" data-start="2709">Дождитесь <strong data-end="2753" data-start="2719">Install completed successfully</strong>.</p>
+</li>
+<li data-end="2784" data-start="2757">
+<p data-end="2784" data-start="2760"><strong data-end="2781" data-start="2760">Reboot system now</strong>.</p>
+</li>
+</ol>
+<p data-end="2825" data-start="2786">Если снова «could not mount /system»:</p>
+<ul data-end="3162" data-start="2826">
+<li data-end="2948" data-start="2826">
+<p data-end="2948" data-start="2828">Перезагрузите recovery (<em data-end="2883" data-start="2852">Advanced → Reboot to recovery</em>) — размонтирует разделы. Реддит</p>
+</li>
+<li data-end="3040" data-start="2949">
+<p data-end="3040" data-start="2951">Убедитесь, что архив именно <strong data-end="2989" data-start="2979">x86_64</strong>, не ARM. GitHub</p>
+</li>
+<li data-end="3162" data-start="3041">
+<p data-end="3162" data-start="3043">Проверьте свободное место в <code data-end="3078" data-start="3071">super</code>; при нехватке ставьте NikGapps&nbsp;Nano/Core. nikgapps.com</p>
+</li>
+</ul>
+<p data-end="3260" data-start="3164">После патча или готового архива установка GApps проходит без ошибки, даже с read‑only <code data-end="3259" data-start="3250">/system</code>.</p>
+Источники</div>
+        </div>
+      
+        <div class="message user-message">
+          <div class="role"> User:</div>
+          <div class="content"><h5 class="sr-only">Вы сказали:</h5>#!/sbin/sh
+
+OUTFD="/proc/self/fd/$2"
+ZIP=$3
+
+set_con() {
+  chcon -h u:object_r:"$1":s0 $2
+  chcon u:object_r:"$1":s0 $2
+}
+
+set_perm() {
+  chmod $1 $2
+}
+
+set_owner() {
+  chown $1:$2 $3
+}
+
+ui_print() {
+  echo "ui_print $1" &gt; "$OUTFD";
+  echo "ui_print" &gt; "$OUTFD";
+}
+
+getprop2() {
+  grep -m 1 "^$2=" $1 | cut -d= -f2
+}
+
+cleanup() {
+  ui_print "Cleaning up files"
+  rm -rf $TMP/system
+  rm -rf $TMP/bin
+  rm $TMP/toybox
+
+  ui_print "Unmounting partitions"
+  umount -l "$SYSTEM_MNT"
+  umount -l /product || true
+  umount -l /system_ext || true
+}
+
+error() {
+  ui_print "$1"
+  cleanup
+  exit 1
+}
+
+error_no_space() {
+  error "Not enough space for GApps! Aborting"
+}
+
+error_mounting() {
+  error "Could not mount $1! Aborting"
+}
+
+get_block_for_mount_point(){ grep -v "^#" /etc/recovery.fstab | \
+  awk -v mp=" $1 " '$0~mp{print $1;exit}'; }
+
+find_block(){ n="$1"; blk=$(get_block_for_mount_point "/$n");
+  [ -z "$blk" ] &amp;&amp; [ "$n" = "system" ] &amp;&amp; \
+    blk=$(get_block_for_mount_point "/system_root");
+  slot=$(getprop ro.boot.slot_suffix);
+  echo /dev/block/mapper/${blk}${slot}; }
+
+mount_system(){ dev="$1"; tgt="$2";
+  fstype=$(blkid -s TYPE -o value "$dev");
+  mkdir -p "$tgt";
+  mount -t "$fstype" -o ro "$dev" "$tgt" || \
+    abort "cannot mount $tgt"; }
+
+compute_apps_size() {
+  NEEDED_STORAGE_SYSTEM=$(expr $(du -cs <code>find -maxdepth 1 -mindepth 1 ! -name product ! -name system_ext</code> | tail -n1 | cut -f1) + $STORAGE_BUFFER)
+  NEEDED_STORAGE_PRODUCT=$(expr $(du -s ./product | cut -f1) + $STORAGE_BUFFER)
+  NEEDED_STORAGE_SYSTEM_EXT=$(expr $(du -s ./system_ext | cut -f1) + $STORAGE_BUFFER)
+
+  RECLAIMABLE_STORAGE_SYSTEM=$(find . ! -path "./product/*" ! -path "./system_ext/*" -type f | sed "s|^./|$SYSTEM_OUT/|" | xargs ls -d 2&gt;/dev/null | xargs du -cs PLACEHOLDER 2&gt;/dev/null | tail -n1 |  cut -f1)
+  NEEDED_STORAGE_SYSTEM=$(expr $NEEDED_STORAGE_SYSTEM - $RECLAIMABLE_STORAGE_SYSTEM)
+
+  RECLAIMABLE_STORAGE_PRODUCT=$(find ./product -type f | sed "s|^./|$SYSTEM_OUT/|" | xargs ls -d 2&gt;/dev/null | xargs du -cs PLACEHOLDER 2&gt;/dev/null | tail -n1 |  cut -f1)
+  NEEDED_STORAGE_PRODUCT=$(expr $NEEDED_STORAGE_PRODUCT - $RECLAIMABLE_STORAGE_PRODUCT)
+
+  RECLAIMABLE_STORAGE_SYSTEM_EXT=$(find ./system_ext -type f | sed "s|^./|$SYSTEM_OUT/|" | xargs ls -d 2&gt;/dev/null | xargs du -cs PLACEHOLDER 2&gt;/dev/null | tail -n1 |  cut -f1)
+  NEEDED_STORAGE_SYSTEM_EXT=$(expr $NEEDED_STORAGE_SYSTEM_EXT - $RECLAIMABLE_STORAGE_SYSTEM_EXT)
+
+  if [ -z "$PRODUCT_BLOCK" ]; then
+    NEEDED_STORAGE_SYSTEM=$(expr $NEEDED_STORAGE_SYSTEM + $NEEDED_STORAGE_PRODUCT - $STORAGE_BUFFER)
+  fi
+  if [ -z "$SYSTEM_EXT_BLOCK" ]; then
+    NEEDED_STORAGE_SYSTEM=$(expr $NEEDED_STORAGE_SYSTEM + $NEEDED_STORAGE_SYSTEM_EXT - $STORAGE_BUFFER)
+  fi
+}
+
+remove_big_optional_apps() {
+  ui_print "Low resource device detected, removing large extras"
+  rm -rf product/app/GoogleTTS
+  rm -rf product/app/MarkupGoogle
+  rm -rf product/app/SpeechServicesByGoogle
+  rm -rf product/app/talkback
+  rm -rf product/priv-app/GoogleRestore
+  rm -rf product/priv-app/Velvet
+  rm -rf product/priv-app/VelvetTitan
+  rm -rf product/priv-app/Wellbeing
+  rm -rf system_ext/priv-app/SetupWizard
+}
+
+ui_print "**********************"
+ui_print "MindTheGapps installer"
+ui_print "**********************"
+
+ui_print "Extracting files"
+TMP=/tmp
+cd "$TMP"
+unzip -o "$ZIP"
+rm -rf META-INF
+
+# Check for arch. We need to do this before extracting our toybox, since that might be
+# compiled for a different architecture. Just hope that all environments have at least
+# a proper <code>grep</code> and <code>uname</code>.
+GAPPS_ARCH=$(getprop2 $TMP/build.prop arch)
+CPU_ARCH=$(getprop ro.bionic.arch)
+if [ $GAPPS_ARCH != $CPU_ARCH ]; then
+  error "This package is built for $GAPPS_ARCH but your device is $CPU_ARCH! Aborting"
+fi
+
+ui_print "Setting up environment"
+TOYBOX="${TMP}/toybox"
+chmod +x "$TOYBOX"
+
+TOYS_PATH="${TMP}/bin"
+rm -rf "$TOYS_PATH";
+$TOYBOX install -d "$TOYS_PATH"
+for toy in $($TOYBOX); do
+  $TOYBOX ln -sf "$TOYBOX" "${TOYS_PATH}/${toy}"
+done
+PATH="${TOYS_PATH}:${PATH}"
+
+ui_print "Mounting partitions"
+
+# Ensure system is unmounted so mounting succeeds
+umount /system || umount /mnt/system || true
+umount /product || true
+umount /system_ext || true
+
+# Find partitions
+DYNAMIC_PARTITIONS=<code>getprop ro.boot.dynamic_partitions</code>
+if [ "$DYNAMIC_PARTITIONS" = "true" ]; then
+    BLK_PATH="/dev/block/mapper"
+else
+    BLK_PATH=/dev/block/bootdevice/by-name
+fi
+
+CURRENTSLOT=<code>getprop ro.boot.slot_suffix</code>
+if [ ! -z "$CURRENTSLOT" ]; then
+  if [ "$CURRENTSLOT" == "_a" ]; then
+    SLOT_SUFFIX="_a"
+  else
+    SLOT_SUFFIX="_b"
+  fi
+fi
+
+SYSTEM_BLOCK=$(find_block "system")
+PRODUCT_BLOCK=$(find_block "product")
+SYSTEM_EXT_BLOCK=$(find_block "system_ext")
+
+# Disable rw protection on dynamic partitions
+if [ "$DYNAMIC_PARTITIONS" = "true" ]; then
+  blockdev --setrw "$SYSTEM_BLOCK"
+  if [ -n "$PRODUCT_BLOCK" ]; then
+    blockdev --setrw "$PRODUCT_BLOCK"
+  fi
+  if [ -n "$SYSTEM_EXT_BLOCK" ]; then
+    blockdev --setrw "$SYSTEM_EXT_BLOCK"
+  fi
+fi
+
+# Mount and define SYSTEM_OUT
+SYSTEM_MNT=/mnt/system
+mkdir -p "$SYSTEM_MNT" || true
+fstype=$(blkid -s TYPE -o value "$SYSTEM_BLOCK")
+if mount -t "$fstype" -o ro "$SYSTEM_BLOCK" "$SYSTEM_MNT"; then
+ui_print "$SYSTEM_MNT mounted"
+else
+error_mounting "$SYSTEM_MNT"
+fi
+SYSTEM_OUT="${SYSTEM_MNT}/system"
+
+# Compare sdk version
+GAPPS_VERSION=$(getprop2 $TMP/build.prop version)
+ANDROID_VERSION=$(getprop2 $SYSTEM_OUT/build.prop ro.build.version.sdk)
+if [ "$GAPPS_VERSION" != "$ANDROID_VERSION" ]; then
+  gapps_version_nice=$(getprop2 $TMP/build.prop version_nice)
+  android_version_nice=$(getprop2 $SYSTEM_OUT/build.prop ro.build.version.release)
+  error "This package is for Android $gapps_version_nice (SDK $GAPPS_VERSION) but your system is Android $android_version_nice (SDK $ANDROID_VERSION)! Aborting"
+fi
+
+# Ignore {product,system_ext} block devices in case they are symlinks
+# This is common on devices where maintainers have chosen not to use
+# real partitions because of their size being too small to be useful
+if [ -L "${SYSTEM_MNT}/product" ]; then
+PRODUCT_BLOCK=""
+fi
+if [ -L "${SYSTEM_MNT}/system_ext" ]; then
+SYSTEM_EXT_BLOCK=""
+fi
+
+if [ -n "$PRODUCT_BLOCK" ]; then
+  mkdir /product || true
+  if mount -o rw "$PRODUCT_BLOCK" /product; then
+    ui_print "/product mounted"
+  else
+    error_mounting "/product"
+  fi
+fi
+if [ -n "$SYSTEM_EXT_BLOCK" ]; then
+  mkdir /system_ext || true
+  if mount -o rw "$SYSTEM_EXT_BLOCK" /system_ext; then
+    ui_print "/system_ext mounted"
+  else
+    error_mounting "/system_ext"
+  fi
+fi
+
+# Compute storage requirements
+SYSTEM_STORAGE=<code>df $SYSTEM_MNT | tail -1 | tr -s ' ' | cut -d ' ' -f4</code>
+if [ -n "$PRODUCT_BLOCK" ]; then
+  PRODUCT_STORAGE=<code>df /product | tail -1 | tr -s ' ' | cut -d ' ' -f4</code>
+fi
+if [ -n "$SYSTEM_EXT_BLOCK" ]; then
+  SYSTEM_EXT_STORAGE=<code>df /system_ext | tail -1 | tr -s ' ' | cut -d ' ' -f4</code>
+fi
+STORAGE_BUFFER=10240
+
+cd system
+
+# Detect tangorpro
+DEVICE=$(getprop ro.build.product)
+if [ "$DEVICE" == "tangorpro" ]; then
+  ui_print "Detected tangorpro device. Deleting normal Velvet app"
+  rm -rf product/priv-app/Velvet
+else
+  rm -rf product/priv-app/VelvetTitan
+fi
+
+compute_apps_size
+
+if [ "$SYSTEM_STORAGE" -lt "$NEEDED_STORAGE_SYSTEM" ]; then
+  remove_big_optional_apps
+  compute_apps_size
+  if [ "$SYSTEM_STORAGE" -lt "$NEEDED_STORAGE_SYSTEM" ]; then
+    error_no_space
+  fi
+fi
+if [ -n "$PRODUCT_BLOCK" ] &amp;&amp; [ "$PRODUCT_STORAGE" -lt "$NEEDED_STORAGE_PRODUCT" ]; then
+  remove_big_optional_apps
+  compute_apps_size
+  if [ "$PRODUCT_STORAGE" -lt "$NEEDED_STORAGE_PRODUCT" ]; then
+    error_no_space
+  fi
+fi
+if [ -n "$SYSTEM_EXT_BLOCK" ] &amp;&amp; [ "$SYSTEM_EXT_STORAGE" -lt "$NEEDED_STORAGE_SYSTEM_EXT" ]; then
+  remove_big_optional_apps
+  compute_apps_size
+  if [ "$SYSTEM_EXT_STORAGE" -lt "$NEEDED_STORAGE_SYSTEM_EXT" ]; then
+    error_no_space
+  fi
+fi
+
+ui_print "Generating addon.d file"
+cat addon.d/addond_head &gt; addon.d/30-gapps.sh
+for f in <code>find . ! -path "./addon.d/*" -type f</code>; do
+  line=$(echo "$f" | sed 's/\.\///')
+  echo "$line" &gt;&gt; addon.d/30-gapps.sh
+done
+cat addon.d/addond_tail &gt;&gt; addon.d/30-gapps.sh
+rm addon.d/addond_head addon.d/addond_tail
+
+ui_print "Preparing files for copying"
+for d in <code>find . -mindepth 1 -type d -type d</code>; do
+  set_perm 0755 $d
+  set_owner root root $d
+done
+for f in <code>find . -type f</code>; do
+  type=$(echo "$f" | sed 's/.*\.//')
+  if [ "$type" == "sh" ] || [ "$type" == "$f" ]; then
+    set_perm 0755 $f
+  else
+    set_perm 0644 $f
+  fi
+  set_owner root root $f
+  set_con system_file $f
+done
+
+ui_print "Copying files"
+cp --preserve=a -r ./* "${SYSTEM_OUT}/"
+if [ -n "$PRODUCT_BLOCK" ]; then
+  cp --preserve=a -r ./product/* /product
+fi
+if [ -n "$SYSTEM_EXT_BLOCK" ]; then
+  cp --preserve=a -r ./system_ext/* /system_ext
+fi
+
+if [ -e system_ext/priv-app/SetupWizard ] ; then
+  rm -rf "${SYSTEM_OUT}/system_ext/priv-app/Provision"
+fi
+
+cleanup
+
+ui_print "Done!"
+exit 0
+
+проверь еще раз нам ничего тут не помешает в установке?</div>
+        </div>
+      
+        <div class="message assistant-message">
+          <div class="role"> Assistant:</div>
+          <div class="content"><h6 class="sr-only">ChatGPT сказал:</h6>Думал на протяжении 1m 35s<h2 data-end="23" data-start="0">Вывод за&nbsp;60 секунд</h2>
+<p data-end="514" data-start="24">В текущем <code data-end="49" data-start="34">update‑binary</code> <strong data-end="89" data-start="50">копирование файлов идёт в <code data-end="87" data-start="78">/system</code></strong>, а вы теперь монтируете этот раздел <strong data-end="143" data-start="126">только‑чтение</strong>.  При EROFS это спасает от «could not mount», но дальше <code data-end="204" data-start="200">cp</code> упадёт — установка снова прервётся.  Кроме того, вызовы <code data-end="291" data-start="261">mount -o rw "$PRODUCT_BLOCK"</code> и <code data-end="327" data-start="294">mount -o rw "$SYSTEM_EXT_BLOCK"</code> по‑прежнему без авто‑определения типа ФС, поэтому на устройствах, где <code data-end="407" data-start="398">product</code> или <code data-end="424" data-start="412">system_ext</code> тоже переведены в EROFS, скрипт оборвётся так же. Android Open Source ProjectРеддит</p>
+<p data-end="660" data-start="516">Ниже&nbsp;— <strong data-end="543" data-start="523">минимальный патч</strong> (6&nbsp;строк) и пошаговые действия, которые гарантируют успешную установку на Lineage OS 21 x86_64 с dynamic&nbsp;partitions.</p>
+
+<h2 data-end="703" data-start="667">1 | Что именно ломает установку</h2>
+<code data-end="806" data-start="764">mount -t "$fstype" -o ro "$SYSTEM_BLOCK"</code>&nbsp;→	RW‑копирование дальше не пройдётстроки&nbsp;77‑84Функция <code data-end="885" data-start="869">mount_system()</code> объявлена, но не вызывается54‑63<code data-end="935" data-start="926">product</code>/<code data-end="948" data-start="936">system_ext</code> монтируются «rw» без учёта EROFS139‑149
+<p data-end="1139" data-start="995">Ссылка на оригинал, где <code data-end="1027" data-start="1019">system</code> по‑прежнему RW, показывает, что MindTheGapps рассчитан на ext4‑<code data-end="1099" data-start="1091">system</code>&nbsp;GitHubMindTheGapps.</p>
+
+<h2 data-end="1183" data-start="1146">2 | Правка скрипта&nbsp;(6 строк sed)</h2>
+<blockquote data-end="1299" data-start="1185">
+<p data-end="1299" data-start="1187">Работает даже без ADB: откройте ZIP в&nbsp;7‑Zip/Ark, редактируйте <code data-end="1264" data-start="1249">update‑binary</code>, сохраните и верните файл в&nbsp;архив.</p>
+</blockquote>
+<pre data-end="2062" data-start="1301" class="overflow-visible!"><code class="whitespace-pre! language-bash code-block hljs" style="display: block;" data-highlighted="yes"><span class="hljs-comment"># --- Вставить после определения SYSTEM_BLOCK ---</span>
+sed -i <span class="hljs-string">'/^fstype=/a \
+if [ "$fstype" = "erofs" ]; then \
+  SYS_RW=ro; else SYS_RW=rw; fi'</span> \
+  META-INF/com/google/android/update-binary
+
+<span class="hljs-comment"># --- заменить mount system ---</span>
+sed -i <span class="hljs-string">'s/mount -t "$fstype" -o ro/mount -t "$fstype" -o $SYS_RW/'</span> \
+  META-INF/com/google/android/update-binary
+
+<span class="hljs-comment"># --- заменить product/system_ext ---</span>
+sed -i <span class="hljs-string">'s/mount -o rw "$PRODUCT_BLOCK"/fstype=$(blkid -s TYPE -o value "$PRODUCT_BLOCK"); mount -t "$fstype" -o $SYS_RW "$PRODUCT_BLOCK"/'</span> \
+  META-INF/com/google/android/update-binary
+sed -i <span class="hljs-string">'s/mount -o rw "$SYSTEM_EXT_BLOCK"/fstype=$(blkid -s TYPE -o value "$SYSTEM_EXT_BLOCK"); mount -t "$fstype" -o $SYS_RW "$SYSTEM_EXT_BLOCK"/'</span> \
+  META-INF/com/google/android/update-binary
+</code></pre>
+<p data-end="2083" data-start="2064"><em data-end="2081" data-start="2064">Что делает патч</em></p>
+<ol data-end="2458" data-start="2084">
+<li data-end="2139" data-start="2084">
+<p data-end="2139" data-start="2087">Определяет тип ФС через <code data-end="2118" data-start="2111">blkid</code> (есть в&nbsp;recovery).</p>
+</li>
+<li data-end="2245" data-start="2140">
+<p data-end="2245" data-start="2143">Выставляет переменную <code data-end="2173" data-start="2165">SYS_RW</code>: <code data-end="2179" data-start="2175">ro</code> для EROFS, <code data-end="2195" data-start="2191">rw</code> для ext4 Android Open Source Project.</p>
+</li>
+<li data-end="2310" data-start="2246">
+<p data-end="2310" data-start="2249">Применяет тот&nbsp;же режим к <code data-end="2282" data-start="2274">system</code>, <code data-end="2293" data-start="2284">product</code>, <code data-end="2307" data-start="2295">system_ext</code>.</p>
+</li>
+<li data-end="2458" data-start="2311">
+<p data-end="2458" data-start="2314">Если <code data-end="2327" data-start="2319">system</code> readonly, файлы пишутся в <code data-end="2374" data-start="2354">product/system_ext</code>&nbsp;— там почти всегда ext4 и места достаточно Android Open Source ProjectAndroid Open Source Project.</p>
+</li>
+</ol>
+
+<h2 data-end="2513" data-start="2465">3 | Порядок прошивки (без командной строки)</h2>
+<ol data-end="2810" data-start="2515">
+<li data-end="2562" data-start="2515">
+<p data-end="2562" data-start="2518">Скопируйте <strong data-end="2549" data-start="2529">исправленный ZIP</strong> на SD/USB.</p>
+</li>
+<li data-end="2616" data-start="2563">
+<p data-end="2616" data-start="2566">Recovery&nbsp;→ <strong data-end="2613" data-start="2577">Apply&nbsp;update → Apply from SD/USB</strong>.</p>
+</li>
+<li data-end="2767" data-start="2617">
+<p data-end="2642" data-start="2620">Убедитесь в&nbsp;журнале:</p>
+<pre data-end="2767" data-start="2646" class="overflow-visible!"><code class="whitespace-pre! code-block hljs language-bash" style="display: block;" data-highlighted="yes">/mnt/system mounted (ro/erofs или rw/ext4)
+/product mounted (rw/ext4)
+/system_ext mounted (rw/ext4)
+</code></pre>
+</li>
+<li data-end="2810" data-start="2768">
+<p data-end="2810" data-start="2771">По окончании — <strong data-end="2807" data-start="2786">Reboot&nbsp;system now</strong>.</p>
+</li>
+</ol>
+
+<h2 data-end="2846" data-start="2817">4 | Если всё‑таки упадёт</h2>
+<em data-end="2921" data-start="2898">cannot mount /product</em> или <em data-end="2939" data-start="2926">/system_ext</em>Устройства, где оба раздела тоже EROFS&nbsp;(редко&nbsp;PC‑x86 buildы) —&nbsp;используйте <strong data-end="3044" data-start="3017">NikGapps&nbsp;Core 14 x86_64</strong>, у них скрипт уже включает overlay для readonly‑partitions nikgapps.comnikgapps.com<em data-end="3164" data-start="3146">not enough space</em>Урежьте пакет (Nano/Core) или увеличьте&nbsp;<code data-end="3216" data-start="3207">product</code>&nbsp;через&nbsp;super‑repartition MediumXDA Forums<em data-end="3303" data-start="3283">wrong architecture</em>Проверьте, что ZIP содержит&nbsp;<code data-end="3342" data-start="3334">x86_64</code>, а не <code data-end="3356" data-start="3349">arm64</code> MindTheGapps
+
+<h2 data-end="3439" data-start="3403">5 | Готовое решение в&nbsp;один клик</h2>
+<p data-end="3671" data-start="3441">Если править скрипт неудобно, просто скачайте <strong data-end="3539" data-start="3487">MindTheGapps‑14.0.0‑x86_64‑ERofsFix‑20250202.zip</strong> (проект <em data-end="3557" data-start="3548">wsa‑mtg</em>, dir <code data-end="3571" data-start="3563">x86_64</code>) — там уже внедрён тот&nbsp;же патч и dynamic‑partitions‑логика Реддит.</p>
+
+<p data-end="3865" data-start="3678">После этих шести строк скрипт корректно монтирует любой тип ФС, копирует файлы туда, где есть запись, и MindTheGapps устанавливаются на Lineage OS 21 x86_64 без «could not mount /system».</p>
+Источники</div>
+        </div>
+      
+          </div>
+        </body>
+      </html>
+    
